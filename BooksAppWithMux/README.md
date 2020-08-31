@@ -1,6 +1,6 @@
-#BooksAppWithMux
+# BooksAppWithMux
 
-##Documentation:
+## Documentation:
 This is an simple book app used for:
 
 * Fetching  the list of books
@@ -9,6 +9,6 @@ This is an simple book app used for:
 * Update a book
 * Delete a book
 
-##Technology:
+## Technology:
 This application is using gorialla mux for the book webserver.
 Using structs to store the books.
