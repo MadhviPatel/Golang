@@ -10,5 +10,5 @@ This is an simple book app used for:
 * Delete a book
 
 ## Technology:
-This application is using gorialla mux for the book webserver.
+This application is using golang and gorialla mux for the book webserver.
 Using structs to store the books.
