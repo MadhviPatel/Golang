@@ -14,7 +14,7 @@ func currentTimestamp(rw http.ResponseWriter, req *http.Request) {
 func main() {
 	fmt.Println("Inside Main")
 	http.HandleFunc("/api/timestamp", currentTimestamp)
-	http.HandleFunc("/api/timestamp/date/{date}", timestamp)
+	//http.HandleFunc("/api/timestamp/date/{date}", timestamp)
 
 	http.ListenAndServe(":9000", nil)
 }
