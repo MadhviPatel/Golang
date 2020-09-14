@@ -47,21 +47,22 @@ func HealthzHandler(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, `{"alive": true}`)
 }
 
-// func createItemHandler(w http.ResponseWriter, r *http.Request) {
-// 	log.Info("createItem API")
-// 	w.Header().Set("Content-Type", "application/json")
+func CreateItemHandler(w http.ResponseWriter, r *http.Request) {
+	log.Info("createItem API")
+	w.Header().Set("Content-Type", "application/json")
 
-// 	var todoitem models.TodoItemModel
-// 	err := json.NewDecoder(r.Body).Decode(&todoitem)
-// 	if err != nil {
-// 		log.Fatalf("Unable to decode the request body.  %v", err)
-// 	}
+	// var todoitem models.TodoItemModel
+	// err := json.NewDecoder(r.Body).Decode(&todoitem)
+	// if err != nil {
+	// 	log.Fatalf("Unable to decode the request body.  %v", err)
+	// }
 
-// 	insertedId := insert(todoitem)
-// 	resp := response{ID: insertedId, Message: "Item created successfully"}
-// 	w.WriteHeader(http.StatusCreated)
-// 	json.NewEncoder(w).Encode(resp)
-// }
+	// insertedId := insert(todoitem)
+	// resp := response{ID: insertedId, Message: "Item created successfully"}
+	// w.WriteHeader(http.StatusCreated)
+	// json.NewEncoder(w).Encode(resp)
+	io.WriteString(w, `{"itemcreated": true}`)
+}
 
 // func insert(todoitem models.TodoItemModel) (lastId int) {
 // 	log.Info("Inserting to db")

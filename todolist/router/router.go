@@ -8,7 +8,7 @@ import (
 
 func Router() {
 	http.HandleFunc("/healthz", middleware.HealthzHandler)
-	//http.HandleFunc("/createItem", middleware.createItemHandler)
+	http.HandleFunc("/createItem", middleware.CreateItemHandler)
 	// http.HandleFunc("/getCompletedItems", middleware.getCompletedItemsHandler)
 	// http.HandleFunc("/getInCompletedItems", middleware.getInCompletedItemsHandler)
 	// http.HandleFunc("/updateItem", middleware.updateItemHandler)
