@@ -71,31 +71,31 @@ func CreateItemHandler(w http.ResponseWriter, r *http.Request) {
 func GetCompletedItemsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Info("get completed item API")
 	w.Header().Set("Content-Type", "application/json")
-	io.Writer(w, `{"get-complete": true}`)
+	io.WriteString(w, `{"get-complete": true}`)
 }
 
 func GetInCompletedItemsHandler(w http.ResponseWriter, r *http.Request) {
 	log.Info("get incompleted item API")
 	w.Header().Set("Content-Type", "application/json")
-	io.Writer(w, `{"get-incomplete": true}`)
+	io.WriteString(w, `{"get-incomplete": true}`)
 
 }
 
 func UpdateItemHandler(w http.ResponseWriter, r *http.Request) {
 	log.Info("update item API")
 	w.Header().Set("Content-Type", "application/json")
-	io.Writer(w, `{"updated": true}`)
+	io.WriteString(w, `{"updated": true}`)
 }
 
 func DeleteItemHandler(w http.ResponseWriter, r *http.Request) {
 	log.Info("delete item API")
 	w.Header().Set("Content-Type", "application/json")
-	io.Writer(w, `{"deleted": true}`)
+	io.WriteString(w, `{"deleted": true}`)
 }
 
 func insert(todoitem models.TodoItemModel) (lastId int) {
 	log.Info("Inserting to db")
-	err := db.QueryRow("insert into todolist(description, created, completed) values ($1,$2,$3) returning id;", todoitem.description, todoitem.created, todoitem.completed).Scan(&lastId)
+	err := db.QueryRow("insert into todolist(description, created, completed) values ($1,$2,$3) returning id;", todoitem.Description, todoitem.Created, todoitem.Completed).Scan(&lastId)
 	chkerr(err)
 	log.Infof("createdItemId: %d", lastId)
 	return
