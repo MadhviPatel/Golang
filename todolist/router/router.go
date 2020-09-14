@@ -1,12 +1,15 @@
 package router
 
-import "net/http"
+import (
+	"net/http"
+	"github.com/pmadhvi/Golang/todolist/middleware"
+) 
 
-func router() {
-	http.HandleFunc("/healthz", healthzHandler)
-	http.HandleFunc("/createItem", createItemHandler)
-	// http.HandleFunc("/getCompletedItems", getCompletedItemsHandler)
-	// http.HandleFunc("/getInCompletedItems", getInCompletedItemsHandler)
-	// http.HandleFunc("/updateItem", updateItemHandler)
-	// http.HandleFunc("/deleteItems", deleteItemHandler)
+func Router() {
+	http.HandleFunc("/healthz", middleware.healthzHandler)
+	http.HandleFunc("/createItem", middleware.createItemHandler)
+	// http.HandleFunc("/getCompletedItems", middleware.getCompletedItemsHandler)
+	// http.HandleFunc("/getInCompletedItems", middleware.getInCompletedItemsHandler)
+	// http.HandleFunc("/updateItem", middleware.updateItemHandler)
+	// http.HandleFunc("/deleteItems", middleware.deleteItemHandler)
 }
