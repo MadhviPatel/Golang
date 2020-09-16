@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 	"strconv"
 
@@ -23,7 +24,7 @@ var db *sql.DB
 var err error
 
 func init() {
-	log.Info("Connecting to todolist database")
+	log.Info("Trying to connect to todolist database")
 	db, err = connectToDatabase()
 	chkerr(err)
 }
@@ -36,18 +37,19 @@ type response struct {
 func connectToDatabase() (db *sql.DB, err error) {
 	dbinfo := fmt.Sprintf("host=localhost port= 5432 user=%s password=%s dbname=%s sslmode=disable", DB_USER, DB_PASS, DB_NAME)
 	db, err = sql.Open("postgres", dbinfo)
+	chkerr(err)
+	log.Info("Connect to todolist database")
 	return
 }
 
 func chkerr(err error) {
 	if err != nil {
 		log.Fatal(err.Error())
-		panic(err)
 	}
 }
 
 func HealthzHandler(w http.ResponseWriter, r *http.Request) {
-	log.Info("API Health is OK------")
+	log.Info("API Health is OK")
 	w.Header().Set("Content-Type", "application/json")
 	io.WriteString(w, `{"alive": true}`)
 }
@@ -57,20 +59,25 @@ func CreateItemHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
 	var todoitem models.TodoItemModel
-	err := json.NewDecoder(r.Body).Decode(&todoitem)
+	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		log.Fatalf("Unable to decode the request body.  %v", err)
+		log.Fatalf("Unable to read the request body.  %v", err)
 	}
-
-	insertedId := insert(todoitem)
-	resp := response{ID: insertedId, Message: "Item created successfully"}
+	defer r.Body.Close()
+	log.Infof("req body is %s::\n", string(body))
+	err = json.Unmarshal(body, &todoitem)
+	if err != nil {
+		log.Fatalf("Unable to unmarshall the request body.  %v", err)
+	}
+	insertedID := insert(todoitem)
+	resp := response{ID: insertedID, Message: "Item created successfully"}
 	w.WriteHeader(http.StatusCreated)
 	json.NewEncoder(w).Encode(resp)
-	//io.WriteString(w, `{"itemcreated": true}`)
+
 }
 
 func GetCompletedItemsHandler(w http.ResponseWriter, r *http.Request) {
-	log.Info("get completed item API")
+	log.Info("get completed items API")
 	w.Header().Set("Content-Type", "application/json")
 	completed := r.URL.Query().Get("completed")
 	todoitems, err := get(completed)
@@ -80,29 +87,31 @@ func GetCompletedItemsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func GetInCompletedItemsHandler(w http.ResponseWriter, r *http.Request) {
-	log.Info("get incompleted item API")
+	log.Info("get incompleted items API")
 	w.Header().Set("Content-Type", "application/json")
 	incompleted := r.URL.Query().Get("in-completed")
 	todoitems, err := get(incompleted)
 	chkerr(err)
 	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(todoitems)
-
 }
 
 func UpdateItemHandler(w http.ResponseWriter, r *http.Request) {
 	log.Info("update item API")
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	var todoitem models.TodoItemModel
-	err := json.NewDecoder(r.Body).Decode(&todoitem)
+	id, err := strconv.Atoi(r.URL.Query().Get("id"))
+	chkerr(err)
+	var todoitem *models.TodoItemModel
+	todoitem, err = getItemById(id)
 	if err != nil {
-		log.Fatalf("Unable to decode the request body.  %v", err)
+		log.Printf("Item with id %d not found\n", id)
 	}
+	todoitem.Description = "updated_desc"
+	log.Info(todoitem)
 	updated, err := update(todoitem)
 	chkerr(err)
 	fmt.Printf("Successfully updated %d items", updated)
-	w.WriteHeader(http.StatusOK)
+
 	resp := response{ID: todoitem.Id, Message: "Item updated successfully"}
 	json.NewEncoder(w).Encode(resp)
 }
@@ -123,7 +132,7 @@ func DeleteItemHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func insert(todoitem models.TodoItemModel) (lastId int) {
-	log.Info("Inserting to db")
+	log.Info("Inserting data to database")
 	err := db.QueryRow("insert into todolist(description, created, completed) values ($1,$2,$3) returning id;", todoitem.Description, todoitem.Created, todoitem.Completed).Scan(&lastId)
 	chkerr(err)
 	log.Infof("createdItemId: %d", lastId)
@@ -141,7 +150,7 @@ func delete(id int) (affected int64, err error) {
 	return
 }
 
-func update(todoitems models.TodoItemModel) (updated int64, err error) {
+func update(todoitems *models.TodoItemModel) (updated int64, err error) {
 	log.Info("updating item into db")
 	stmt, err := db.Prepare("update todolist set description=$1 where id=$2")
 	chkerr(err)
@@ -152,8 +161,20 @@ func update(todoitems models.TodoItemModel) (updated int64, err error) {
 	return
 }
 
+func getItemById(id int) (item models.TodoItemModel, err error) {
+	log.Info("get item by Id from db")
+	row, err := db.Query("select * from todolist where id=$1", id)
+	defer row.Close()
+	chkerr(err)
+	for row.Next() {
+		err = row.Scan(&item.Id, &item.Description, &item.Created, &item.Completed)
+		chkerr(err)
+	}
+	return
+}
+
 func get(complete string) (todoitems []models.TodoItemModel, err error) {
-	log.Info("select query returning items from db")
+	log.Info("query returning items from db")
 	rows, err := db.Query("select * from todolist where completed=$1", complete)
 	defer rows.Close()
 	chkerr(err)
