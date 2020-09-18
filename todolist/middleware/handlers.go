@@ -161,15 +161,13 @@ func update(todoitems *models.TodoItemModel) (updated int64, err error) {
 	return
 }
 
-func getItemById(id int) (item models.TodoItemModel, err error) {
+func getItemById(id int) (itemModel *models.TodoItemModel, err error) {
 	log.Info("get item by Id from db")
-	row, err := db.Query("select * from todolist where id=$1", id)
-	defer row.Close()
+	row := db.QueryRow("select * from todolist where id=$1", id)
+	var item models.TodoItemModel
+	err = row.Scan(&item.Id, &item.Description, &item.Created, &item.Completed)
 	chkerr(err)
-	for row.Next() {
-		err = row.Scan(&item.Id, &item.Description, &item.Created, &item.Completed)
-		chkerr(err)
-	}
+	itemModel = &item
 	return
 }
 
