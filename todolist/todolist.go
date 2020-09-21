@@ -8,7 +8,6 @@ import (
 )
 
 func main() {
-	//defer db.Close()
 	log.Info("Starting todolist server")
 	router.Router()
 	http.ListenAndServe(":9000", nil)
