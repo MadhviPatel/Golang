@@ -1,12 +1,10 @@
 package middleware
 
 import (
+	"io"
 	"net/http"
-	"github.com/pmadhvi/Golang/newsApp/models"
 )
 
-
 func topHeadLinesHandler(res http.ResponseWriter, req *http.Request) {
-
+	io.WriteString(res, "Top Headlines")
 }
-
