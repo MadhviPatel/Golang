@@ -2,10 +2,8 @@ FROM golang:1.14
 
 WORKDIR /app
 
-ENV SRC_DIR=/go/src/github.com/pmadhvi/Golang/BooksAppWithMux
+COPY . /app
 
-COPY . ${SRC_DIR}
+RUN go build -o booksApp
 
-RUN cd ${SRC_DIR}; go build -o myapp; cp myapp /app/
-
-ENTRYPOINT ["./myapp"]
+ENTRYPOINT ["./booksApp"]
