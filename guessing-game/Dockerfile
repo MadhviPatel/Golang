@@ -1,9 +1,16 @@
-FROM golang:1.14
+FROM golang:1.14 AS builder
+
+WORKDIR /run-app
+
+COPY . /run-app
+
+RUN go build -o gg
+
+
+FROM scratch
 
 WORKDIR /app
 
-COPY . /app
+COPY --from=builder /run-app/gg /app/
 
-RUN go build -o guessing-game
-
-ENTRYPOINT ["./guessing-game"]
+ENTRYPOINT ["./gg"]
