@@ -1,16 +1,15 @@
-FROM golang:1.14 AS builder
+FROM golang:1.14.3-alpine AS builder
 
 WORKDIR /run-app
 
-COPY . /run-app
+# Copies files and directories from host to image under /run-app/
+COPY . .
 
 RUN go build -o gg
 
 
 FROM scratch
 
-WORKDIR /app
-
-COPY --from=builder /run-app/gg /app/
+COPY --from=builder /run-app/gg /
 
 ENTRYPOINT ["./gg"]

@@ -1,9 +1,20 @@
-FROM golang:1.14
+FROM golang:1.14.3-alpine AS builder
 
-WORKDIR /app
+WORKDIR /build
 
-COPY . /app
+# Copies files and directories from host to image under /run-app/
+COPY . .
 
-RUN go build -o booksApp
+RUN go build -o booksapp .
 
-ENTRYPOINT ["./booksApp"]
+WORKDIR /dist
+
+# Copy binary from build to main folder
+RUN cp /build/booksapp .
+
+
+FROM scratch AS bin
+
+COPY --from=builder /dist/booksapp /
+
+ENTRYPOINT ["./booksapp"]
