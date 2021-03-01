@@ -1,0 +1,122 @@
+{
+  "extractors": [
+    {
+      "title": "swixpocket_operator",
+      "extractor_type": "regex",
+      "converters": [
+        {
+          "type": "tokenizer",
+          "config": {}
+        }
+      ],
+      "order": 0,
+      "cursor_strategy": "copy",
+      "source_field": "message",
+      "target_field": "swixpocket_operator",
+      "extractor_config": {
+        "regex_value": "(swixpocket_operator=\\d)"
+      },
+      "condition_type": "string",
+      "condition_value": "swixpocket_operator"
+    },
+    {
+      "title": "trace",
+      "extractor_type": "regex",
+      "converters": [
+        {
+          "type": "tokenizer",
+          "config": {}
+        }
+      ],
+      "order": 0,
+      "cursor_strategy": "copy",
+      "source_field": "message",
+      "target_field": "trace",
+      "extractor_config": {
+        "regex_value": "(trace=[0-9a-fA-F]{8}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{4}\\-[0-9a-fA-F]{12})"
+      },
+      "condition_type": "string",
+      "condition_value": "trace"
+    },
+    {
+      "title": "swix_request_tracker",
+      "extractor_type": "regex",
+      "converters": [
+        {
+          "type": "tokenizer",
+          "config": {}
+        }
+      ],
+      "order": 0,
+      "cursor_strategy": "copy",
+      "source_field": "message",
+      "target_field": "swix_request_tracker",
+      "extractor_config": {
+        "regex_value": "(swix_request_tracker=([^\\s]+))"
+      },
+      "condition_type": "string",
+      "condition_value": "swix_request_tracker"
+    },
+    {
+      "title": "swix_session_tracker",
+      "extractor_type": "regex",
+      "converters": [
+        {
+          "type": "tokenizer",
+          "config": {}
+        }
+      ],
+      "order": 0,
+      "cursor_strategy": "copy",
+      "source_field": "message",
+      "target_field": "swix_session_tracker",
+      "extractor_config": {
+        "regex_value": "(swix_session_tracker=([^\\s]+))"
+      },
+      "condition_type": "string",
+      "condition_value": "swix_session_tracker"
+    },
+    {
+      "title": "swixpocket_backend",
+      "extractor_type": "regex",
+      "converters": [
+        {
+          "type": "tokenizer",
+          "config": {}
+        }
+      ],
+      "order": 0,
+      "cursor_strategy": "copy",
+      "source_field": "message",
+      "target_field": "swixpocket_backend",
+      "extractor_config": {
+        "regex_value": "(swixpocket_backend=\\S+)"
+      },
+      "condition_type": "string",
+      "condition_value": "swixpocket_backend"
+    },
+    {
+      "title": "Timestamp",
+      "extractor_type": "regex",
+      "converters": [
+        {
+          "type": "date",
+          "config": {
+            "date_format": "yyyy-MM-dd'T'HH:mm:ss.SSSSSS",
+            "time_zone": "Europe/London"
+          }
+        }
+      ],
+      "order": 0,
+      "cursor_strategy": "copy",
+      "source_field": "message",
+      "target_field": "timestamp",
+      "extractor_config": {
+        "regex_value": "(\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}.\\d{6})"
+      },
+      "condition_type": "none",
+      "condition_value": ""
+    }
+  ],
+  "version": "4.0.5"
+}
